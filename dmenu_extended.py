@@ -360,7 +360,7 @@ class dmenu(object):
                                         stdin=subprocess.PIPE,
                                         preexec_fn=os.setsid)
         msg = str(message)
-        msg = "Please wait: " + msg
+        msg = "Proszę czekać: " + msg
         msg = msg.encode(system_encoding)
         self.message.stdin.write(msg)
         self.message.stdin.close()
@@ -477,7 +477,7 @@ class dmenu(object):
 
     def cache_regenerate(self, message=True):
         if message:
-            self.message_open('building cache...\nThis may take a while (press enter to run in background).')
+            self.message_open('budowanie cache...\nTo może chwilę potrwać (wciśnij enter aby kontynuować w tle).')
         cache = self.cache_build()
         if message:
             self.message_close()
@@ -607,7 +607,7 @@ class dmenu(object):
     def plugins_available(self):
         self.load_preferences()
         if self.debug:
-            print('Loading available plugins...')
+            print('Ładuję dostępne pluginy...')
 
         plugins = self.get_plugins(True)
         plugin_titles = []
@@ -618,8 +618,8 @@ class dmenu(object):
                 plugin_titles.append(plugin['plugin'].title)
 
         if self.debug:
-            print('Done!')
-            print('Plugins loaded:')
+            print('Zrobione!')
+            print('Załadowane pluginy:')
             print('First 5 items: ')
             print(plugin_titles[:5])
             print(str(len(plugin_titles)) + ' loaded in total')
@@ -847,7 +847,7 @@ class extension(dmenu):
         cacheSize = len(self.cache_load().split("\n"))
 
         if self.debug:
-            print('Rebuilding the cache...')
+            print('Przebudowywanie cache...')
         result = self.cache_regenerate()
         if self.debug:
             print('Cache built')
@@ -866,15 +866,15 @@ class extension(dmenu):
 
         if cacheSizeChange != 0:
             if cacheSizeChange == 1:
-                status = 'one new item was added.'
+                status = 'jedna nowa pozycja została dodana.'
             elif cacheSizeChange == -1:
-                status = 'one item was removed.'
+                status = 'jedna pozycja została usunięta.'
             elif cacheSizeChange > 0:
-                status = str(cacheSizeChange) + ' items were added.'
+                status = str(cacheSizeChange) + ' pozycje zostały dodane.'
             elif cacheSizeChange < 0:
-                status = str(abs(cacheSizeChange)) + ' items were removed.'
+                status = str(abs(cacheSizeChange)) + ' pozycje zostały usunięte.'
             else:
-                status = 'No new items were added'
+                status = 'Nie dodano żadnych nowych pozycji'
 
             response.append('Cache updated successfully; ' + status)
 
@@ -884,7 +884,7 @@ class extension(dmenu):
         else:
             response.append('Cache rebuilt; its size did not change.')
 
-        response.append('The cache contains ' + str(cacheSize) + ' items.')
+        response.append('Cache zawiera ' + str(cacheSize) + ' pozycji.')
 
         self.menu(response)
 
@@ -895,14 +895,14 @@ class extension(dmenu):
 
 
     def download_plugins(self):
-        self.message_open('Downloading a list of plugins...')
+        self.message_open('Pobieram listę pluginów...')
 
         try:
             plugins = self.download_json(self.plugins_index_url)
         except:
             self.message_close()
-            self.menu(["Error: Could not connect to plugin repository.",
-                       "Please check your internet connection and try again."])
+            self.menu(["Błąd: Nie mogę się połączyć z repozytorium pluginów.",
+                       "Sprawdź połączenie internetowe i spróbuj ponownie."])
             sys.exit()
 
         items = []
@@ -922,12 +922,12 @@ class extension(dmenu):
         self.message_close()
 
         if len(items) == 0:
-            self.menu(['There are no new plugins to install'])
+            self.menu(['Nie ma nowych pluginów do instalacji'])
         else:
             item = substitute[0] + self.select(items, 'Instaluj:')
 
             if item != -1:
-                self.message_open("Downloading selected plugin...")
+                self.message_open("Pobieranie wybranego pluginu...")
                 plugin_name = item.split(' - ')[0]
                 plugin = plugins[plugin_name]
                 plugin_source = self.download_text(plugin['url'])
@@ -942,10 +942,10 @@ class extension(dmenu):
                 self.plugins_available()
                 self.message_close()
 
-                self.menu(['Plugin downloaded and installed successfully'])
+                self.menu(['Plugin pobrany i zainstalowany'])
 
                 if self.debug:
-                    print("Plugins available:")
+                    print("Dostępne pluginy:")
                     for plugin in self.plugins_available():
                         print(plugin)
 
@@ -960,13 +960,13 @@ class extension(dmenu):
 
     def remove_plugin(self):
         plugins = self.installed_plugins()
-        pluginText = self.select(plugins, prompt='Plugin to remove:')
+        pluginText = self.select(plugins, prompt='Plugin do usunięcia:')
         if pluginText != -1:
             plugin = pluginText.split('(')[1].replace(')', '')
             path = path_plugins + '/' + plugin
             if os.path.exists(path):
                 os.remove(path)
-                self.menu(['Plugin "' + plugin + '" was removed.'])
+                self.menu(['Plugin "' + plugin + '" usunięty.'])
                 if self.debug:
                     print("Plugins available:")
                     for plugin in self.plugins_available():
@@ -982,7 +982,7 @@ class extension(dmenu):
 
 
     def update_plugins(self):
-        self.message_open('Checking for plugin updates...')
+        self.message_open('Sprawdzam aktualizację pluginów...')
         plugins_here = list(map(lambda x: x['filename'].split('.')[0], self.get_plugins()))
         plugins_here.remove('plugin_settings')
         plugins_there = self.download_json(self.plugins_index_url)
@@ -1027,13 +1027,13 @@ class extension(dmenu):
 
 
     def run(self, inputText):
-        items = ['Rebuild cache',
-                 self.prefs['indicator_submenu'] + ' Download new plugins',
-                 self.prefs['indicator_submenu'] + ' Remove existing plugins',
-                 'Edit menu preferences',
-                 'Update installed plugins']
+        items = ['Przebuduj cache',
+                 self.prefs['indicator_submenu'] + ' Pobierz nowe pluginy',
+                 self.prefs['indicator_submenu'] + ' Usuń istniejące pluginy',
+                 'Edytuj ustawienia menu',
+                 'Aktualizuj zainstalowane pluginy']
 
-        selectedIndex = self.select(items, "Action:", numeric=True)
+        selectedIndex = self.select(items, "Akcja:", numeric=True)
 
         if selectedIndex != -1:
             if selectedIndex == 0:
