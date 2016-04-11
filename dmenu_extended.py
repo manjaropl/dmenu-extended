@@ -76,7 +76,7 @@ default_prefs = {
     "alias_applications": False,        # Alias applications with their common names
     "aliased_applications_format": "{name} ({command})",
     "path_shellCommand": "~/.dmenuEextended_shellCommand.sh",
-    "menu": 'dmenu',                    # Executable for the menu
+    "menu": 'dmenuv',                    # Executable for the menu
     "menu_arguments": [
         "-b",                           # Place at bottom of screen
         "-i",                           # Case insensitive searching
@@ -91,12 +91,16 @@ default_prefs = {
         "-fn",                          # Font and size
         "-*-terminus-medium-*-*-*-14-*-*-*-*-*-*-*",
         "-l",                           # Number of lines to display
-        "20"
+        "20",
+        "-w",
+        "0.4",
+        "-g",
+        "Tc"
     ],
     "fileopener": "xdg-open",           # Program to handle opening files
     "filebrowser": "xdg-open",          # Program to handle opening paths
     "webbrowser": "xdg-open",           # Program to hangle opening urls
-    "terminal": "xterm",                # Terminal
+    "terminal": "terminator",                # Terminal
     "indicator_submenu": "->",          # Symbol to indicate a submenu item
     "indicator_edit": "*",              # Symbol to indicate an item will launch an editor
     "indicator_alias": "#"              # Symbol to indecate an aliased command
@@ -828,13 +832,13 @@ class dmenu(object):
 
 class extension(dmenu):
 
-    title = 'Settings'
+    title = 'Ustawienia'
     is_submenu = True
 
     def __init__(self):
         self.load_preferences()
 
-    plugins_index_url = 'https://raw.githubusercontent.com/markjones112358/dmenu-extended-plugins/master/plugins_index.json'
+    plugins_index_url = 'https://raw.githubusercontent.com/manjaropl/dmenu-extended-plugins/master/plugins_index.json'
 
     def rebuild_cache(self):
         if self.debug:
@@ -920,7 +924,7 @@ class extension(dmenu):
         if len(items) == 0:
             self.menu(['There are no new plugins to install'])
         else:
-            item = substitute[0] + self.select(items, 'Install:')
+            item = substitute[0] + self.select(items, 'Instaluj:')
 
             if item != -1:
                 self.message_open("Downloading selected plugin...")
@@ -949,7 +953,7 @@ class extension(dmenu):
     def installed_plugins(self):
         plugins = []
         for plugin in self.get_plugins():
-            if plugin["plugin"].title is not "Settings":
+            if plugin["plugin"].title is not "Ustawienia":
                 plugins.append(plugin["plugin"].title.replace(':','') + ' (' + plugin["filename"] + ')')
         return plugins
 
@@ -1119,7 +1123,7 @@ def run(debug=False):
     if debug:
         d.debug = True
     cache = d.cache_load()
-    out = d.menu(cache,'Open:').strip()
+    out = d.menu(cache,'Otwórz:').strip()
     if len(out) > 0:
         if debug:
             print("Menu closed with user input: " + out)
